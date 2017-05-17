@@ -4,20 +4,36 @@
 				throw new ReferenceError("You must load Leaflet to use easymap!");
 		}
 		// Default config
+		const osm_attr = '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors';
 		L.easymap = {
 				config: {
-						basemaps: {
+						provider: {
 								osm_org: {
 										url: 'http://{s}.tile.osm.org/{z}/{x}/{y}.png',
-										attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+										options: {
+												attribution: osm_attr
+										}
+								},
+								opencycle: {
+										url: 'http://{s}.tile.opencyclemap.org/cycle/{z}/{x}/{y}.png',
+										options: {
+												attribution: '&copy; OpenCycleMap, Map data '+osm_attr
+										}
 								}
 						},
-						default_basemap: "osm_org",
+						default_provider: "osm_org",
 						origin: [51.48, 0],
 						zoom:14
 				}
 		};
 
+		// Monkey-patching leaflet-providers
+		if(L.tileLayer.provider && !L.tileLayer.provider.known) {
+				L.tileLayer.provider.known = function(name) {
+						return !!L.TileLayer.Provider.providers[name.split('.')[0]];
+				}
+		}
+		
 		function data(elem, attr) {
 				return elem.getAttribute("data-" + attr);
 		}
@@ -41,18 +57,55 @@
 				if(lon) { o[1] = lon; }
 				return o;
 		}
+
+		function providerOptions(elem, defaults) {
+				const attrs = elem.attributes;
+				const options = {};
+				if(defaults) {
+						const keys = Object.keys(defaults);
+						for(var i = 0; i < keys.length; i++) {
+								const k = keys[i];
+								options[k] = defaults[k];
+						}
+				}
+				// we allow a shortcut name for the attribution
+				const attribution = data(elem, "attribution");
+				if(attribution) { options.attribution = attribution; }
+				for(var i = 0; i < attrs.length; i++) {
+						const name = attrs[i].name;
+						const pars = name.match(/^data-provider-(.*)$/);
+						if (pars && pars[1]) {
+								options[pars[1]] = attrs[i].value;
+						}
+				}
+				console.log(options);
+				return options;
+		}
+		
+		function tileLayer(name, elem) {
+				// is the leaflet-providers plugin loaded?
+				if (L.tileLayer.provider && L.tileLayer.provider.known(name)) {
+						return  L.tileLayer.provider(name, providerOptions(elem));
+				} else {
+						const provider = L.easymap.config.provider[name];
+						if(!provider) {
+								throw 'No such provider (' + name + ')';
+						}
+						return L.tileLayer(provider.url,
+															 providerOptions(elem, provider.options));
+				}
+		}
 		
 		/* 
 		 * create the map on elem
 		 */
 		function mappify(elem) {
 				// read the data attributes
-				const basemap = L.easymap.config.basemaps.osm_org;
 				const markertxt = data(elem, "marker");
 				const popuptxt = data(elem, "popup");
 				const mpos = markertxt && markertxt.split(",");
 				const locate = booldata(elem, "locate");
-				const origin = getOrigin(elem, mpos);
+				const origin = getOrigin(elem, mpos );
 				
 				const map = L.map(elem); // create the map
 				map.setView(origin, // set the view
@@ -63,10 +116,8 @@
 				}
 
 				// Todo: improve baselayer selection (more baselayers)
-				L.tileLayer(basemap.url,
-										{attribution: basemap.attribution}).addTo(map);
-
-
+				tileLayer(data(elem, "provider") ||
+									L.easymap.config.default_provider, elem).addTo(map);
 				const marker = mpos && L.marker(mpos).addTo(map);
 
 				// a popup

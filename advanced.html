@@ -7,15 +7,22 @@
 		<!-- the explain-content javascript (must be called before easymap) -->
 	  <script src="js/explain-content.js"></script>
 		<link rel="stylesheet" href="explain-content.css" />
-		
-		<!-- include leaflet css an javascript -->
-		<link rel="stylesheet"
-			href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" />
-	  <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet-src.js"></script>
 
+		<!-- include leaflet css and javascript -->
+		<link rel="stylesheet" crossorigin=""
+				integrity="sha512-07I2e+7D8p6he1SIM+1twR5TIrhUQn9+I6yjqD53JQjFiMf8EtC93ty0/5vJTZGF8aAocvHYNEDJajGdNx1IsQ=="
+				href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" />
+				<script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"
+					integrity="sha512-A7vV8IFfih/D732iSSKi20u/ooOfj/AGehOKq0f4vLT1Zr2Y+RX7C+w8A1gaSasGtRUZpF/NZgzSAu4/Gc41Lg=="
+					crossorigin=""></script>
+
+		<!-- we can include the leaflet-providers plugin (not mandatory),
+					and choose from these -->
+		<script src="http://leaflet-extras.github.io/leaflet-providers/leaflet-providers.js"></script>
+					
 		<!-- the leaflet easymap javascript -->
 	  <script src="js/leaflet-easymap.js"></script>
-								
+
 		<style type="text/css">
 			.easymap {
 			  height: 300px;
@@ -61,7 +68,21 @@
 			<div class="easymap" data-marker="49.9,10.875" data-popup="Hi!"></div>
 			<figcaption>Popup at marker</figcaption>
 		</figure>
-			
-
+		<figure class="explain-content">
+			<div class="easymap" data-provider="opencycle"></div>
+			<figcaption>Different basemap provider</figcaption>
+		</figure>
+		<figure class="explain-content">
+			<div class="easymap" data-provider="OpenTopoMap"></div>
+			<figcaption>Including the leaflet-providers plugin gives more choice</figcaption>
+		</figure>
+		<figure class="explain-content">
+			<div class="easymap" data-provider="NASAGIBS.ViirsEarthAtNight2012" data-origin="49.8997, 10.875" data-zoom="3"></div>
+			<figcaption>Including the <a href="http://leaflet-extras.github.io/leaflet-providers/preview/">leaflet-providers plugin</a> gives more basemap choices</figcaption>
+		</figure>
+		<figure class="explain-content">
+			<div class="easymap" data-attribution="Always give credit!"></div>
+			<figcaption>You <em>can</em> change the attribution, but you should always give credit!</figcaption>
+		</figure>
   </body>
 </html>
