@@ -1,0 +1,67 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+		<meta charset="utf-8" />
+    <title>Leaflet Easymap</title>
+
+		<!-- the explain-content javascript (must be called before easymap) -->
+	  <script src="js/explain-content.js"></script>
+		<link rel="stylesheet" href="explain-content.css" />
+		
+		<!-- include leaflet css an javascript -->
+		<link rel="stylesheet"
+			href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" />
+	  <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet-src.js"></script>
+
+		<!-- the leaflet easymap javascript -->
+	  <script src="js/leaflet-easymap.js"></script>
+								
+		<style type="text/css">
+			.easymap {
+			  height: 300px;
+			}
+		</style>
+  </head>
+
+  <body>
+    <h1>Easymap with html attributes</h1>
+		<figure class="explain-content">
+			<div class="easymap"></div>
+			<figcaption>Default map</figcaption>
+		</figure>
+		<figure class="explain-content">
+			<div class="easymap" data-locate="true"></div>
+			<figcaption>Use user location</figcaption>
+		</figure>
+		<figure class="explain-content">
+			<div class="easymap" data-lat="49.8997" data-lon="10.875"></div>
+			<figcaption>Set map center</figcaption>
+		</figure>
+		<figure class="explain-content">
+			<div class="easymap" data-origin="49.8997, 10.875"></div>
+			<figcaption>Set map center (compact form)</figcaption>
+		</figure>
+		<figure class="explain-content">
+			<div class="easymap" data-zoom="8"></div>
+			<figcaption>Set map zoom</figcaption>
+		</figure>
+		<figure class="explain-content">
+			<div class="easymap" data-marker="49.8997, 10.875"></div>
+			<figcaption>Set marker (at center)</figcaption>
+		</figure>
+		<figure class="explain-content">
+			<div class="easymap" data-marker="49.9,10.875" data-origin="49.903,10.885"></div>
+			<figcaption>Set marker and center</figcaption>
+		</figure>
+		<figure class="explain-content">
+			<div class="easymap" data-popup="Greenwich"></div>
+			<figcaption>Popup at center</figcaption>
+		</figure>
+		<figure class="explain-content">
+			<div class="easymap" data-marker="49.9,10.875" data-popup="Hi!"></div>
+			<figcaption>Popup at marker</figcaption>
+		</figure>
+			
+
+  </body>
+</html>

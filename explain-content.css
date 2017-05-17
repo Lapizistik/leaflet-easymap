@@ -1,0 +1,16 @@
+figure {
+		display: inline-block;
+		border: 1px solid black;
+		width:500px;
+		margin:5px;
+		vertical-align:top;
+}
+figcaption {
+		padding:5px;
+		font-size: 10px;
+}
+.lang-html {
+		white-space: pre-wrap;
+		display:block;
+		padding-top: 4px;
+}		
