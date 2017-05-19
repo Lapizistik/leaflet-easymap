@@ -1,11 +1,17 @@
+// ToDo
+// The code could use some cleanup nd better documentation
+
 // let's have some anonymous function (as a scope)
-(function() {
+(function(window, document) {
 		if(!("L" in window)) {
 				throw new ReferenceError("You must load Leaflet to use easymap!");
 		}
 		// Default config
 		const osm_attr = '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors';
+
+		// ToDo: do not overwrite config set before
 		L.easymap = {
+				attribution: '<a href="http://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> | <a href="https://lapizistik.github.io/leaflet-easymap" title="Include maps in HTML without programming">Easymap</a>',
 				config: {
 						provider: {
 								osm_org: {
@@ -24,24 +30,31 @@
 						default_provider: "osm_org",
 						origin: [51.48, 0],
 						zoom:14
+				},
+				geojson: {
+						style: geojsonStyle,
+						pointToLayer: geojsonMarker,
+						onEachFeature: geojsonFeature
 				}
 		};
-
-		// Monkey-patching leaflet-providers
-		if(L.tileLayer.provider && !L.tileLayer.provider.known) {
-				L.tileLayer.provider.known = function(name) {
-						return !!L.TileLayer.Provider.providers[name.split('.')[0]];
+		
+		function monkeyPatchPlugins() {
+				// Monkey-patching leaflet-providers
+				if(L.tileLayer.provider && !L.tileLayer.provider.known) {
+						L.tileLayer.provider.known = function(name) {
+								return !!L.TileLayer.Provider.providers[name.split('.')[0]];
+						};
 				}
 		}
-		
+
+		// have data accessor similar to jQuery
 		function data(elem, attr) {
+				// should we return an array if attr is "[…]" ?
 				return elem.getAttribute("data-" + attr);
 		}
-
 		function booldata(elem, attr) {
 				return ((data(elem, attr)||"").toUpperCase() == "TRUE");
-		}
-		
+		}		
 		
 		/* 
 		 * determine the origin from data attributes
@@ -58,16 +71,12 @@
 				return o;
 		}
 
+		/*
+		 * parse options for provider
+		 */
 		function providerOptions(elem, defaults) {
 				const attrs = elem.attributes;
-				const options = {};
-				if(defaults) {
-						const keys = Object.keys(defaults);
-						for(var i = 0; i < keys.length; i++) {
-								const k = keys[i];
-								options[k] = defaults[k];
-						}
-				}
+				const options = (defaults && L.extend({}, defaults)) || {};
 				// we allow a shortcut name for the attribution
 				const attribution = data(elem, "attribution");
 				if(attribution) { options.attribution = attribution; }
@@ -78,7 +87,6 @@
 								options[pars[1]] = attrs[i].value;
 						}
 				}
-				console.log(options);
 				return options;
 		}
 		
@@ -93,6 +101,78 @@
 						}
 						return L.tileLayer(provider.url,
 															 providerOptions(elem, provider.options));
+				}
+		}
+
+		/*
+		 * process geoJSON files
+		 */
+		function geojsonMarker(feature, latlng) {
+				// ToDo: add support for advanced markers/icons
+				return L.marker(latlng);
+		}
+		function geojsonStyle(feature) {
+				return (feature.properties && feature.properties.pathoptions) || {};
+		}
+		function geojsonFeature(feature, layer) {
+				geojsonPopup(feature, layer);
+				const style = feature.properties.style || feature.properties.css ||
+									feature.style; // we also support geojsonCSS-like styling
+				if (layer.setStyle) {
+						layer.setStyle(style);
+				}
+		}
+		function popuphtml(feature) {
+				// we support geojsonCSS-like popupTemplate
+				const template = feature.properties.popupTemplate || feature.popupTemplate;
+				if(template) { return template; }
+				var html = "";
+				const title = feature.properties.title;
+				const desc = feature.properties.description;
+				if (title) {
+						html = html + "<h2>" + title + "</h2>";
+				}
+				if (desc) {
+						html = html + "<p>" + desc + "</p>";
+				}
+				if (html) {
+						return '<div class="feature">' + html + '</div>';
+				}
+				return null;
+		}
+		function geojsonPopup(feature, layer) {
+				const content = popuphtml(feature);
+				if (!content) { return; }
+				const popupoptions = { autoClose: feature.properties.autoclose };
+				const popup = layer.bindPopup(content, popupoptions);
+				if (feature.properties.openpopup) {
+						// hm, does not work, see Leaflet bug
+						// https://github.com/Leaflet/Leaflet/issues/971
+						// ToDo: fix this
+						layer.openPopup();
+				}
+		}
+		function addGeoJSON(lg, url) {
+				if (url) {
+						const request = new XMLHttpRequest();
+						request.overrideMimeType("application/json");
+						request.onreadystatechange = function() {
+								if ((request.readyState === XMLHttpRequest.DONE) &&
+										(request.status === 200)) {
+										const json = JSON.parse(request.responseText);
+										L.geoJSON(json, L.easymap.geojson).addTo(lg);	
+								}
+						};
+						request.open('GET', url);
+						request.send();
+				}
+		}
+
+		function attributeEasymap(map) {
+				// the attributioncontrol property is not part of the official
+				// leaflet api, so we test for it
+				if (map.attributionControl) {
+						map.attributionControl.setPrefix(L.easymap.attribution);
 				}
 		}
 		
@@ -111,6 +191,8 @@
 				map.setView(origin, // set the view
 										data(elem, "zoom") || L.easymap.config.zoom);
 
+				attributeEasymap(map);
+				
 				if(locate) {
 						map.locate({ setView: true });
 				}
@@ -131,6 +213,8 @@
 						}
 				}
 				
+				addGeoJSON(map, data(elem, "geojson"));
+									 
 		}
 
 
@@ -146,6 +230,7 @@
 		var done = false; // only call this once!
 		function init_once() {
 				if(!done) {
+						monkeyPatchPlugins();
 						mappify_em();
 						done = true;
 				}
@@ -154,4 +239,4 @@
 		if(document.readyState !== "loading") { // we may be late
 				init_once();                        // so call it
 		}
-})();
+})(window, document);

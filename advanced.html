@@ -19,7 +19,7 @@
 		<!-- we can include the leaflet-providers plugin (not mandatory),
 					and choose from these -->
 		<script src="https://leaflet-extras.github.io/leaflet-providers/leaflet-providers.js"></script>
-					
+		
 		<!-- the leaflet easymap javascript -->
 	  <script src="js/leaflet-easymap.js"></script>
 
@@ -73,16 +73,16 @@
 			<figcaption>Different basemap provider</figcaption>
 		</figure>
 		<figure class="explain-content">
-			<div class="easymap" data-provider="OpenTopoMap"></div>
-			<figcaption>Including the leaflet-providers plugin gives more choice</figcaption>
-		</figure>
-		<figure class="explain-content">
 			<div class="easymap" data-provider="NASAGIBS.ViirsEarthAtNight2012" data-origin="49.8997, 10.875" data-zoom="3"></div>
 			<figcaption>Including the <a href="http://leaflet-extras.github.io/leaflet-providers/preview/">leaflet-providers plugin</a> gives more basemap choices</figcaption>
 		</figure>
 		<figure class="explain-content">
 			<div class="easymap" data-attribution="Always give credit!"></div>
 			<figcaption>You <em>can</em> change the attribution, but you should always give credit!</figcaption>
+		</figure>
+		<figure class="explain-content">
+			<div class="easymap" data-geojson="data/face.geojson" data-zoom=6 data-origin="54.75,3.72"></div>
+			<figcaption>Include some Geojson (click on eyes and chin for popups). Warning: contents of the geojson file may be executed (e.g. scripts in the popup template). Be careful with files from unknown sources.</figcaption>
 		</figure>
   </body>
 </html>

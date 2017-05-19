@@ -1,0 +1,123 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+			  "comment": "You can use simplestyle https://github.com/mapbox/simplestyle-spec for styling your features",
+				"title": "One eye",
+				"description": "I have an eye on you!",
+        "marker-color": "#ff0000",
+        "marker-size": "medium",
+        "marker-symbol": ""
+      },
+			"geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.26318359375,
+          54.73730756865752
+        ]
+      }
+      
+    },
+    {
+      "type": "Feature",
+			"properties": {
+					"popupTemplate": "<p>Aye</p>"
+			},
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.71337890625,
+          54.749990970226925
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+			  "comment": "You can provide path options http://leafletjs.com/reference-1.0.3.html#path-option for styling your paths",
+				"pathoptions": {
+				  "color": "#d00000",
+					"weight": 3,
+					"opacity": 0.5
+				}
+				
+			},
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            2.9443359375,
+            54.863962939854765
+          ],
+          [
+            2.9443359375,
+            54.303704439898084
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+					"comment": "You can use CSS for styling your features",
+					"style": {
+							"color": "#ffffff",
+							"weight": 5
+					}
+			},
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              1.494140625,
+              54.18815548107151
+            ],
+            [
+              2.109375,
+              53.81362579235235
+            ],
+            [
+              2.8564453125,
+              53.69670647530323
+            ],
+            [
+              3.69140625,
+              53.904338156274704
+            ],
+            [
+              4.37255859375,
+              54.27805485967281
+            ],
+            [
+              2.92236328125,
+              54.04648911335576
+            ],
+            [
+              1.494140625,
+              54.18815548107151
+            ]
+          ]
+        ]
+      }
+    },
+		{
+      "type": "Feature",
+      "properties": {},
+			"comment": "You can also style the complete popup yourself (compatible to LeafletCSS)",
+			"popupTemplate": "<p>I may contain any HTML</p><img src=\"http://leafletjs.com/docs/images/logo.png\" width=\"200px\">",	
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+						[ 2.8, 53.4],
+						[ 3.0, 53.3],
+						[	3.2, 53.4],
+            [ 3.0, 53.5],
+						[ 2.8, 53.4]
+          ]]
+      }
+    }
+  ]
+}
