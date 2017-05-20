@@ -1,5 +1,9 @@
 // ToDo
-// The code could use some cleanup and better documentation
+// The code could use some cleanup and better documentation.
+// Currently I put everything in one file, but I should switch to some
+// builder/precompiler.
+// I also don't use “let” to stay compatible with more browsers
+// (but I try to avoid “var” by using “const” whereever possible)
 
 // let's have some anonymous function (as a scope)
 (function(window, document) {
@@ -156,7 +160,6 @@
 						layer.openPopup();
 				}
 		}
-		
 		function addGeoJSON(lg, url, tooltiptext) {
 				const request = new XMLHttpRequest();
 				request.overrideMimeType("application/json");
