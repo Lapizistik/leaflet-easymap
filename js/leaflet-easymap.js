@@ -1,5 +1,5 @@
 // ToDo
-// The code could use some cleanup nd better documentation
+// The code could use some cleanup and better documentation
 
 // let's have some anonymous function (as a scope)
 (function(window, document) {
@@ -116,6 +116,10 @@
 		}
 		function geojsonFeature(feature, layer) {
 				geojsonPopup(feature, layer);
+				const tooltip = feature.properties.tooltip || feature.properties.title;
+				if (tooltip) {
+						layer.bindTooltip(tooltip);
+				}
 				const style = feature.properties.style || feature.properties.css ||
 									feature.style; // we also support geojsonCSS-like styling
 				if (layer.setStyle) {
@@ -152,20 +156,20 @@
 						layer.openPopup();
 				}
 		}
-		function addGeoJSON(lg, url) {
-				if (url) {
-						const request = new XMLHttpRequest();
-						request.overrideMimeType("application/json");
-						request.onreadystatechange = function() {
-								if ((request.readyState === XMLHttpRequest.DONE) &&
-										(request.status === 200)) {
-										const json = JSON.parse(request.responseText);
-										L.geoJSON(json, L.easymap.geojson).addTo(lg);	
-								}
-						};
-						request.open('GET', url);
-						request.send();
-				}
+		
+		function addGeoJSON(lg, url, tooltiptext) {
+				const request = new XMLHttpRequest();
+				request.overrideMimeType("application/json");
+				request.onreadystatechange = function() {
+						if ((request.readyState === XMLHttpRequest.DONE) &&
+								(request.status === 200)) {
+								const json = JSON.parse(request.responseText);
+								const layer = L.geoJSON(json, L.easymap.geojson).addTo(lg);
+								if (tooltiptext) { layer.bindTooltip(tooltiptext); }
+						}
+				};
+				request.open('GET', url);
+				request.send();
 		}
 
 		function attributeEasymap(map) {
@@ -182,10 +186,12 @@
 		function mappify(elem) {
 				// read the data attributes
 				const markertxt = data(elem, "marker");
+				const tooltiptext = data(elem, "tooltip");
 				const popuptxt = data(elem, "popup");
 				const mpos = markertxt && markertxt.split(",");
 				const locate = booldata(elem, "locate");
 				const origin = getOrigin(elem, mpos );
+				const url = data(elem, "geojson");
 				
 				const map = L.map(elem); // create the map
 				map.setView(origin, // set the view
@@ -198,8 +204,9 @@
 				}
 
 				// Todo: improve baselayer selection (more baselayers)
-				tileLayer(data(elem, "provider") ||
-									L.easymap.config.default_provider, elem).addTo(map);
+				const base = tileLayer((data(elem, "provider") ||
+																L.easymap.config.default_provider),
+															 elem).addTo(map);
 				const marker = mpos && L.marker(mpos).addTo(map);
 
 				// a popup
@@ -212,9 +219,22 @@
 								popup.setLatLng(origin).openOn(map);
 						}
 				}
-				
-				addGeoJSON(map, data(elem, "geojson"));
-									 
+
+				if (url) {
+						// only deliver tooltip to geojsoncallback if there is no marker
+						addGeoJSON(map, url, !marker && tooltiptext);
+				}
+
+				// add a tooltip
+				// if there is an object (marker or geojson) the tooltip is added
+				// to the object, otherwise to the tilelayer
+				if (tooltiptext) {
+						if(marker) {
+								marker.bindTooltip(tooltiptext).openTooltip();
+						} else if (!url) { // ok, the tooltip has no geojson
+								base.bindTooltip(tooltiptext).openTooltip(origin);
+						}
+				}
 		}
 
 
