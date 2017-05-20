@@ -9,8 +9,10 @@ figcaption {
 		padding:5px;
 		font-size: 10px;
 }
-.lang-html {
+
+figcaption code {
+		margin: 0.7ex 0px;
+		display: block;
 		white-space: pre-wrap;
-		display:block;
-		padding-top: 4px;
-}		
+		padding-top: 4px;		
+}
