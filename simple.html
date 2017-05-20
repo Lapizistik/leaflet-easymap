@@ -9,15 +9,16 @@
     <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js" integrity="sha512-A7vV8IFfih/D732iSSKi20u/ooOfj/AGehOKq0f4vLT1Zr2Y+RX7C+w8A1gaSasGtRUZpF/NZgzSAu4/Gc41Lg==" crossorigin=""></script>
 
     <!-- the leaflet easymap javascript -->
+    <!-- include this _after_ the leaflet javascript -->
     <script src="js/leaflet-easymap.js"></script>
         
     <style type="text/css">
       .easymap {
-			  /* Important: the element needs a height! */
+        /* Important: the element needs a height! */
         height: 300px; /* adjust this as you need it */
 
-			  /* the following css is optional */
-			  border: 2px solid black;
+        /* the following css is optional */
+        border: 2px solid black;
         margin:5px;
       }
     </style>
@@ -26,6 +27,7 @@
   <body>
     <h1>A nice OSM map (with Leaflet)</h1>
 
+    <!-- This is the map element -->
     <div class="easymap"></div>
 
     <ul>
