@@ -8,7 +8,7 @@
 // let's have some anonymous function (as a scope)
 (function(window, document) {
 		if(!("L" in window)) {
-				throw new ReferenceError("You must load Leaflet to use easymap!");
+				throw new ReferenceError("You must load Leaflet to use Leaflet Easymap!");
 		}
 		// Default config
 		const osm_attr = '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors';
@@ -33,7 +33,8 @@
 						},
 						default_provider: "osm_org",
 						origin: [51.48, 0],
-						zoom:14
+						zoom:14,
+						class: 'leasymap'
 				},
 				geojson: {
 						style: geojsonStyle,
@@ -243,7 +244,8 @@
 
 		/* The startup sequence */
 		function mappify_em(cls) {
-				const maps = document.getElementsByClassName(cls || "easymap"); 
+				const maps = document.getElementsByClassName(cls ||
+																										 L.easymap.config.class); 
 				for(var i=0; i<maps.length; i++) {
 						mappify(maps[i]);
 				}

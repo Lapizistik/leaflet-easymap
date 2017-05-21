@@ -2,12 +2,11 @@
 <html>
   <head>
 		<meta charset="utf-8" />
-    <title>Leaflet Easymap</title>
+    <title>Leasymap</title>
 
-		<!-- the explain-content javascript (must be called before easymap) -->
+		<!-- the explain-content javascript (must be called before leaflet easymap) -->
 	  <script src="js/explain-content.js"></script>
-		<link rel="stylesheet" href="explain-content.css" />
-		<link rel="stylesheet" href="easymap.css" />
+		<link rel="stylesheet" href="leasymap.css" />
 
 		<!-- include leaflet css and javascript -->
 		<link rel="stylesheet" crossorigin=""
@@ -25,19 +24,19 @@
 	  <script src="js/leaflet-easymap.js"></script>
 
 		<style type="text/css">
-			.easymap {
+			.leasymap {
 			  height: 300px;
 			}
 		</style>
   </head>
 
   <body>
-    <h1><a href="https://github.com/Lapizistik/leaflet-easymap">Easymap</a> – Examples</h1>
+    <h1><a href="https://github.com/Lapizistik/leaflet-easymap">Leaflet Easymap</a> – Examples</h1>
 		<p>
-			Easymap is a <a href="leafletjs.com">Leaflet</a> based library for
+			Leaflet Easymap is a <a href="leafletjs.com">Leaflet</a> based library for
 			integrating maps in webpages without programming.
 			You just include the library in your web page and every html element with
-			class <code>easymap</code> will be turned into a Leaflet map
+			class <code>leasymap</code> will be turned into a Leaflet map
 			(see examples below).
 		</p>
 		<p>
@@ -48,68 +47,68 @@
 			Find <a href="https://github.com/Lapizistik/leaflet-easymap">the library and documentation on Github</a>.
 		</p>
 		<figure class="explain-content">
-			<div class="easymap"></div>
+			<div class="leasymap"></div>
 			<figcaption>Default map</figcaption>
 		</figure>
 		<figure class="explain-content">
-			<div class="easymap" data-locate="true"></div>
+			<div class="leasymap" data-locate="true"></div>
 			<figcaption>Use user location (<a href="http://leafletjs.com/reference-1.0.3.html#map-locate">needs https in modern browsers</a>)</figcaption>
 		</figure>
 		<figure class="explain-content">
-			<div class="easymap" data-lat="49.8997" data-lon="10.875"></div>
+			<div class="leasymap" data-lat="49.8997" data-lon="10.875"></div>
 			<figcaption>Set map center</figcaption>
 		</figure>
 		<figure class="explain-content">
-			<div class="easymap" data-origin="49.8997, 10.875"></div>
+			<div class="leasymap" data-origin="49.8997, 10.875"></div>
 			<figcaption>Set map center (compact form)</figcaption>
 		</figure>
 		<figure class="explain-content">
-			<div class="easymap" data-zoom="8"></div>
+			<div class="leasymap" data-zoom="8"></div>
 			<figcaption>Set map zoom</figcaption>
 		</figure>
 		<figure class="explain-content">
-			<div class="easymap" data-marker="49.8997, 10.875"></div>
+			<div class="leasymap" data-marker="49.8997, 10.875"></div>
 			<figcaption>Set marker (at center)</figcaption>
 		</figure>
 		<figure class="explain-content">
-			<div class="easymap" data-marker="49.9,10.875" data-origin="49.903,10.885"></div>
+			<div class="leasymap" data-marker="49.9,10.875" data-origin="49.903,10.885"></div>
 			<figcaption>Set marker and center</figcaption>
 		</figure>
 		<figure class="explain-content">
-			<div class="easymap" data-marker="49.9,10.875" data-tooltip="Hi"></div>
+			<div class="leasymap" data-marker="49.9,10.875" data-tooltip="Hi"></div>
 			<figcaption>Set marker with tooltip</figcaption>
 		</figure>
 		<figure class="explain-content">
-			<div class="easymap" data-tooltip="Here is Greenwich"></div>
+			<div class="leasymap" data-tooltip="Here is Greenwich"></div>
 			<figcaption>Set tooltip</figcaption>
 		</figure>
 		<figure class="explain-content">
-			<div class="easymap" data-popup="Greenwich"></div>
+			<div class="leasymap" data-popup="Greenwich"></div>
 			<figcaption>Popup at center</figcaption>
 		</figure>
 		<figure class="explain-content">
-			<div class="easymap" data-marker="49.9,10.875" data-popup="Hi!"></div>
+			<div class="leasymap" data-marker="49.9,10.875" data-popup="Hi!"></div>
 			<figcaption>Popup at marker</figcaption>
 		</figure>
 		<figure class="explain-content">
-			<div class="easymap" data-provider="opencycle"></div>
+			<div class="leasymap" data-provider="opencycle"></div>
 			<figcaption>Different basemap provider</figcaption>
 		</figure>
 		<figure class="explain-content">
-			<div class="easymap" data-provider="NASAGIBS.ViirsEarthAtNight2012" data-origin="49.8997, 10.875" data-zoom="3"></div>
+			<div class="leasymap" data-provider="NASAGIBS.ViirsEarthAtNight2012" data-origin="49.8997, 10.875" data-zoom="3"></div>
 			<figcaption>Including the <a href="http://leaflet-extras.github.io/leaflet-providers/preview/">leaflet-providers plugin</a> gives more basemap choices</figcaption>
 		</figure>
 		<figure class="explain-content">
-			<div class="easymap" data-attribution="Always give credit!"></div>
+			<div class="leasymap" data-attribution="Always give credit!"></div>
 			<figcaption>You <em>can</em> change the attribution, but you should always give credit!</figcaption>
 		</figure>
 		<figure class="explain-content">
-			<div class="easymap" data-geojson="data/face.geojson" data-zoom=6 data-origin="54.75,3.72"></div>
+			<div class="leasymap" data-geojson="data/face.geojson" data-zoom=6 data-origin="54.75,3.72"></div>
 			<figcaption>Include some Geojson (click on eyes and chin for popups).<br/>
 				You can create geojson e.g. on <a href="https:geojson.io">geojson.io</a>.<br/><em><strong>Warning:</strong> contents of the geojson file may be executed (e.g. scripts in the popup template). Be careful with files from unknown sources.</em></figcaption>
 		</figure>
 		<figure class="explain-content">
-			<div class="easymap" data-geojson="data/boxes.geojson" data-zoom=11 data-origin="26.15,3.87" data-tooltip="I am here"></div>
+			<div class="leasymap" data-geojson="data/boxes.geojson" data-zoom=11 data-origin="26.15,3.87" data-tooltip="I am here"></div>
 			<figcaption>The whole geojson also can have a tooltip (visible on mouseover).</figcaption>
 		</figure>
   </body>

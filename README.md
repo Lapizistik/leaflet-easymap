@@ -1,7 +1,7 @@
-# Leaflet Easymap
+# Leasymap (Leaflet Easymap)
 
-Easymap is a  [Leaflet](http://leafletjs.com) based library for integrating
-([OSM](http://www.openstreetmap.de)) maps in webpages without programming.
+Leasymap is a  [Leaflet](http://leafletjs.com) based library for
+integrating ([OSM](http://www.openstreetmap.de)) maps in webpages without programming.
 
 ## Examples
 * See [the showcase](https://lapizistik.github.io/leaflet-easymap/) with examples of customization by options.
