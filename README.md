@@ -5,7 +5,7 @@ integrating ([OSM](http://www.openstreetmap.de)) maps in webpages without progra
 
 ## Examples
 * See [the showcase](https://lapizistik.github.io/leaflet-easymap/) with examples of customization by options.
-* Have a look at the [source code](simple.html) of [simple.html](https://lapizistik.github.io/leaflet-easymap/) for a very reduced example.
+* Have a look at the [source code](simple.html) of [simple.html](https://lapizistik.github.io/leaflet-easymap/simple.html) for a very reduced example.
 
 ## Todo
 * Improve documentation: detailled descriptions for all options
