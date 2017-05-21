@@ -17,7 +17,7 @@
 						fc = document.createElement("figcaption");
 						elem.appendChild(fc);
 				}
-				const inner = elem.querySelector(".easymap");
+				const inner = elem.querySelector(".leasymap");
 				
 				const code =  document.createElement("code");
 				code.setAttribute("class", "lang-html");
