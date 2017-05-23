@@ -9,7 +9,7 @@
 				"description": "I have an eye on you!",
         "marker-color": "#ff0000",
         "marker-size": "medium",
-        "marker-symbol": ""
+        "marker-symbol": "dentist"
       },
 			"geometry": {
         "type": "Point",

@@ -8,7 +8,7 @@
 // let's have some anonymous function (as a scope)
 (function(window, document) {
 		if(!("L" in window)) {
-				throw new ReferenceError("You must load Leaflet to use Leaflet Easymap!");
+				throw new ReferenceError("You must load Leaflet to use Leasymap!");
 		}
 		// Default config
 		const osm_attr = '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors';
@@ -34,13 +34,19 @@
 						default_provider: "osm_org",
 						origin: [51.48, 0],
 						zoom:14,
+						iconsizes: {
+								small: 18,
+								medium: 26,
+								large: 34
+						},
 						class: 'leasymap'
 				},
 				geojson: {
 						style: geojsonStyle,
 						pointToLayer: geojsonMarker,
 						onEachFeature: geojsonFeature
-				}
+				},
+				makiurl: "https://lapizistik.github.io/maki/icons/{maki}-15.svg"
 		};
 		
 		function monkeyPatchPlugins() {
@@ -60,6 +66,98 @@
 		function booldata(elem, attr) {
 				return ((data(elem, attr)||"").toUpperCase() == "TRUE");
 		}		
+
+		const svgTemplate = '<svg style="width:{width};" viewBox="-10.5 -30.5 21 31.4" clippath="m 0,0 c 0,0 -10,-15 -10,-20 0,-5 5,-10 10,-10 5,0 10,5 10,10 C 10,-15 0,0 0,0 Z"><path d="m 0,0 c 0,0 -10,-15 -10,-20 0,-5 5,-10 10,-10 5,0 10,5 10,10 C 10,-15 0,0 0,0 Z" style="fill:{fill};fill-opacity:1;stroke:{stroke};stroke-width:{strokewidth};" />{inner}</svg>';
+		
+		const svgTextTemplate = '<text x="0" y="-15" text-anchor="middle">{text}</text>';
+
+		const svgImgTemplate = '<svg viewBox="0 0 15 15" x="-7" y="-25" width="14" height="14" style="fill:{symbolfill};"></svg>';
+
+		const svgcircletemplate = '<circle r="4.2" cy="-20" cx="0" style="fill:{symbolfill};stroke:{stroke};stroke-width:{strokewidth};" />';
+		
+		const SVGIcon = L.DivIcon.extend({
+				options: {
+						className: 'svg-icon',
+						iconSize: 'medium'
+				},
+				initialize: function(options) {
+						options = L.Util.setOptions(this, options);
+
+						options.iconSize = L.easymap.config.iconsizes[options.iconSize] ||
+								options.iconSize;
+						if (!isNaN(options.iconSize)) {
+								const size = options.iconSize;
+								options.iconSize = [size, size*1.48];
+						}
+						options.iconAnchor = [options.iconSize[0]/2, options.iconSize[1]];
+						options.popupAnchor = [0, -0.8*options.iconSize[1]];
+						options.tooltipAnchor = [0, -0.6*options.iconSize[1]];
+				},
+				createIcon: function(oldIcon) {
+						const options = this.options;
+
+						function makiimg(symbol) {
+								return L.Util.template(L.easymap.makiurl, {maki: symbol});
+						}
+
+						function addMakiSVG(div, symbol, params) {
+								const request = new XMLHttpRequest();
+								request.onreadystatechange = function() {
+										if ((request.readyState === XMLHttpRequest.DONE) &&
+												(request.status === 200)) {
+												const xml = request.responseXML;
+												const rsvg = xml.getElementsByTagName('svg')[0];
+												const isvg = div.firstElementChild.getElementsByTagName('svg')[0];
+
+												for(var i=0; i<rsvg.children.length; i++) {
+														isvg.appendChild(rsvg.children[i]);
+												}
+										}
+								};
+								request.open('GET', L.Util.template(makiimg(symbol)));
+								request.send();
+						}
+
+						
+						function setSVG(div, options) {
+								
+								const params = {
+										width: options.iconSize[0],
+										fill: '#2981ca',
+										symbolfill: '#ffff00',
+										stroke: '#000000',
+										strokewidth: 0.3
+								};
+								
+								function inner(symbol) {
+										if (/^[a-zA-Z0-9]$/.test(symbol)) {
+												params.text = symbol;
+												return L.Util.template(svgTextTemplate, params);
+										}
+										if (symbol) {
+												addMakiSVG(div, symbol, params);
+												return L.Util.template(svgImgTemplate, params);
+										}
+										return L.Util.template(svgcircletemplate, params);
+								}
+
+								params.inner = inner(options.symbol);
+								
+								const svg = L.Util.template(svgTemplate, params);
+
+								div.innerHTML = svg;
+								return div;
+						}
+
+						const div = 	setSVG(document.createElement('div'), options);
+						this._setIconStyles(div, 'icon');
+						return div;
+				}
+		});
+		function svgIcon(options) {
+				return new SVGIcon(options);
+		}
+
 		
 		/* 
 		 * determine the origin from data attributes
@@ -114,7 +212,9 @@
 		 */
 		function geojsonMarker(feature, latlng) {
 				// ToDo: add support for advanced markers/icons
-				return L.marker(latlng);
+				const p = feature.properties;
+				return L.marker(latlng,
+												{icon: svgIcon({symbol: p['marker-symbol']})});
 		}
 		function geojsonStyle(feature) {
 				return (feature.properties && feature.properties.pathoptions) || {};
