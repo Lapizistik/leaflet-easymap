@@ -46,7 +46,7 @@
 						pointToLayer: geojsonMarker,
 						onEachFeature: geojsonFeature
 				},
-				makiurl: "https://lapizistik.github.io/maki/icons/{maki}-15.svg"
+				makiurl: "maki/icons/{maki}-15.svg"
 		};
 		
 		function monkeyPatchPlugins() {
