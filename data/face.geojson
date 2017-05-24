@@ -7,9 +7,10 @@
 			  "comment": "You can use simplestyle https://github.com/mapbox/simplestyle-spec for styling your features",
 				"title": "One eye",
 				"description": "I have an eye on you!",
-        "marker-color": "#ff0000",
+        "marker-color": "#ffffff",
+        "marker-symbolcolor": "#ff0000",
         "marker-size": "medium",
-        "marker-symbol": "dentist"
+        "marker-symbol": "heart"
       },
 			"geometry": {
         "type": "Point",

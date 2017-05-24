@@ -2,6 +2,8 @@
 // The code could use some cleanup and better documentation.
 // Currently I put everything in one file, but I should switch to some
 // builder/precompiler.
+// Especially the geojson marker feature support grew much too large and messy.
+//
 // I also don't use “let” to stay compatible with more browsers
 // (but I try to avoid “var” by using “const” whereever possible)
 
@@ -67,98 +69,6 @@
 				return ((data(elem, attr)||"").toUpperCase() == "TRUE");
 		}		
 
-		const svgTemplate = '<svg style="width:{width};" viewBox="-10.5 -30.5 21 31.4" clippath="m 0,0 c 0,0 -10,-15 -10,-20 0,-5 5,-10 10,-10 5,0 10,5 10,10 C 10,-15 0,0 0,0 Z"><path d="m 0,0 c 0,0 -10,-15 -10,-20 0,-5 5,-10 10,-10 5,0 10,5 10,10 C 10,-15 0,0 0,0 Z" style="fill:{fill};fill-opacity:1;stroke:{stroke};stroke-width:{strokewidth};" />{inner}</svg>';
-		
-		const svgTextTemplate = '<text x="0" y="-15" text-anchor="middle">{text}</text>';
-
-		const svgImgTemplate = '<svg viewBox="0 0 15 15" x="-7" y="-25" width="14" height="14" style="fill:{symbolfill};"></svg>';
-
-		const svgcircletemplate = '<circle r="4.2" cy="-20" cx="0" style="fill:{symbolfill};stroke:{stroke};stroke-width:{strokewidth};" />';
-		
-		const SVGIcon = L.DivIcon.extend({
-				options: {
-						className: 'svg-icon',
-						iconSize: 'medium'
-				},
-				initialize: function(options) {
-						options = L.Util.setOptions(this, options);
-
-						options.iconSize = L.easymap.config.iconsizes[options.iconSize] ||
-								options.iconSize;
-						if (!isNaN(options.iconSize)) {
-								const size = options.iconSize;
-								options.iconSize = [size, size*1.48];
-						}
-						options.iconAnchor = [options.iconSize[0]/2, options.iconSize[1]];
-						options.popupAnchor = [0, -0.8*options.iconSize[1]];
-						options.tooltipAnchor = [0, -0.6*options.iconSize[1]];
-				},
-				createIcon: function(oldIcon) {
-						const options = this.options;
-
-						function makiimg(symbol) {
-								return L.Util.template(L.easymap.makiurl, {maki: symbol});
-						}
-
-						function addMakiSVG(div, symbol, params) {
-								const request = new XMLHttpRequest();
-								request.onreadystatechange = function() {
-										if ((request.readyState === XMLHttpRequest.DONE) &&
-												(request.status === 200)) {
-												const xml = request.responseXML;
-												const rsvg = xml.getElementsByTagName('svg')[0];
-												const isvg = div.firstElementChild.getElementsByTagName('svg')[0];
-
-												for(var i=0; i<rsvg.children.length; i++) {
-														isvg.appendChild(rsvg.children[i]);
-												}
-										}
-								};
-								request.open('GET', L.Util.template(makiimg(symbol)));
-								request.send();
-						}
-
-						
-						function setSVG(div, options) {
-								
-								const params = {
-										width: options.iconSize[0],
-										fill: '#2981ca',
-										symbolfill: '#ffff00',
-										stroke: '#000000',
-										strokewidth: 0.3
-								};
-								
-								function inner(symbol) {
-										if (/^[a-zA-Z0-9]$/.test(symbol)) {
-												params.text = symbol;
-												return L.Util.template(svgTextTemplate, params);
-										}
-										if (symbol) {
-												addMakiSVG(div, symbol, params);
-												return L.Util.template(svgImgTemplate, params);
-										}
-										return L.Util.template(svgcircletemplate, params);
-								}
-
-								params.inner = inner(options.symbol);
-								
-								const svg = L.Util.template(svgTemplate, params);
-
-								div.innerHTML = svg;
-								return div;
-						}
-
-						const div = 	setSVG(document.createElement('div'), options);
-						this._setIconStyles(div, 'icon');
-						return div;
-				}
-		});
-		function svgIcon(options) {
-				return new SVGIcon(options);
-		}
-
-		
 		/* 
 		 * determine the origin from data attributes
 		 */
@@ -208,13 +118,144 @@
 		}
 
 		/*
+		 * SVG-based markers for geojson
+		 * including support for maki-markers
+		 */
+		const svgTemplate = '<svg style="width:{iconwidth};" viewBox="-10.5 -30.5 21 31.4" clippath="m 0,0 c 0,0 -10,-15 -10,-20 0,-5 5,-10 10,-10 5,0 10,5 10,10 C 10,-15 0,0 0,0 Z"><path d="m 0,0 c 0,0 -10,-15 -10,-20 0,-5 5,-10 10,-10 5,0 10,5 10,10 C 10,-15 0,0 0,0 Z" style="fill:{marker-color};stroke:{stroke};stroke-width:{stroke-width};" />{inner}</svg>';
+		
+		const svgTextTemplate = '<text x="0" y="-15" text-anchor="middle" style="stroke:none;fill:{marker-symbolcolor}">{text}</text>';
+
+		const svgImgTemplate = '<svg x="-7" y="-25" width="14" height="14" style="fill:{marker-symbolcolor};"></svg>';
+
+		const svgcircletemplate = '<circle r="4.2" cy="-20" cx="0" style="fill:{marker-symbolcolor};stroke:{stroke};stroke-width:{stroke-width};" />';
+
+		const SVGIcon = L.DivIcon.extend({
+				options: {
+						className: 'svg-icon',
+						iconSize : L.easymap.config.iconsizes['medium'],
+						'marker-color': '#7e7e7e',
+						'marker-symbolcolor': '#ffffff',
+						stroke: '#555555',
+						'stroke-width': 0.3,
+						'stroke-opacity': 1
+						
+				},
+				initialize: function(options) {
+						options = L.Util.setOptions(this, options);
+
+						options.iconSize =
+								L.easymap.config.iconsizes[options['marker-size']] ||
+								options.iconSize;
+						if (!isNaN(options.iconSize)) {
+								const size = options.iconSize;
+								options.iconSize = [size, size*1.48];
+						}
+						options.iconAnchor = [options.iconSize[0]/2, options.iconSize[1]];
+						options.popupAnchor = [0, -0.8*options.iconSize[1]];
+						options.tooltipAnchor = [0, -0.6*options.iconSize[1]];
+				},
+				createIcon: function(oldIcon) {
+						const options = this.options;
+
+						function makiimg(symbol) {
+								return L.Util.template(L.easymap.makiurl, {maki: symbol});
+						}
+
+						function addMakiSVG(div, symbol, params) {
+								const request = new XMLHttpRequest();
+								request.onreadystatechange = function() {
+										if ((request.readyState === XMLHttpRequest.DONE) &&
+												(request.status === 200)) {
+												const xml = request.responseXML;
+												const rsvg = xml.getElementsByTagName('svg')[0];
+												const isvg = div.firstElementChild.
+																	getElementsByTagName('svg')[0];
+												const iattrs = isvg.attributes;
+												
+												for(var i=0; i<iattrs.length; i++) {
+														rsvg.setAttributeNode(iattrs[i].cloneNode());
+												}
+
+/*												for(var i=0; i<rsvg.children.length; i++) {
+														isvg.appendChild(rsvg.children[i]);
+												}
+ */
+												isvg.parentNode.replaceChild(rsvg, isvg);
+												
+										}
+								};
+								request.open('GET', L.Util.template(makiimg(symbol)));
+								request.send();
+						}
+
+						
+						function setSVG(div, options) {
+								
+								const params =L.extend({
+										iconwidth: options.iconSize[0]
+								}, options);
+								
+								function inner(symbol) {
+										if (/^[a-zA-Z0-9]$/.test(symbol)) {
+												params.text = symbol;
+												return L.Util.template(svgTextTemplate, params);
+										}
+										if (symbol) {
+												addMakiSVG(div, symbol, params);
+												return L.Util.template(svgImgTemplate, params);
+										}
+										return L.Util.template(svgcircletemplate, params);
+								}
+
+								params.inner = inner(options["marker-symbol"] ||
+																		 options.symbol);
+								
+								const svg = L.Util.template(svgTemplate, params);
+
+								div.innerHTML = svg;
+								return div;
+						}
+
+						const div = 	setSVG(document.createElement('div'), options);
+						this._setIconStyles(div, 'icon');
+						return div;
+				}
+		});
+		function svgIcon(options) {
+				return new SVGIcon(options);
+		}
+
+		/*
 		 * process geoJSON files
 		 */
+
+		// color props from symplestyle-spec (we added the key "color"
+		const PROPKEYS = /^(?:(?:marker-(?:symbol)?)?colou?r|stroke|fill)$/;
+		// the following regexp matches short and long RGB and RGBA strings,
+		// e.g. "007", "4711", "affe", "c010ff", "bbaadd08c0"
+		// Fortunately, none of the 140 color names supported by CSS matches
+		// this regexp, so they are preserved :-)
+		const PROPCOLORS = /^(?:[0-9a-fA-F]{3,4}){1,2}$/;
+		
+		function parseGeoJSON(jsontxt) {
+				// The simplestyle-spec allows for hex colors to omit the `#'.
+				// We assume it is save to add it for a selected set of properties.
+				return JSON.parse(jsontxt,
+													function(key, value) {
+															if (PROPKEYS.test(key) &&
+																	PROPCOLORS.test(value)) {
+																	return '#' + value;
+															} else {
+																	return value;
+															}
+													});
+		}
+		
+
 		function geojsonMarker(feature, latlng) {
 				// ToDo: add support for advanced markers/icons
-				const p = feature.properties;
 				return L.marker(latlng,
-												{icon: svgIcon({symbol: p['marker-symbol']})});
+												{icon: svgIcon(feature.properties)});
 		}
 		function geojsonStyle(feature) {
 				return (feature.properties && feature.properties.pathoptions) || {};
@@ -267,7 +308,7 @@
 				request.onreadystatechange = function() {
 						if ((request.readyState === XMLHttpRequest.DONE) &&
 								(request.status === 200)) {
-								const json = JSON.parse(request.responseText);
+								const json = parseGeoJSON(request.responseText);
 								const layer = L.geoJSON(json, L.easymap.geojson).addTo(lg);
 								if (tooltiptext) { layer.bindTooltip(tooltiptext); }
 						}
