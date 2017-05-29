@@ -130,7 +130,7 @@
 
 		const svgcircletemplate = '<circle r="4.2" cy="-20" cx="0" style="fill:{marker-symbolcolor};stroke:{stroke};stroke-width:{stroke-width};" />';
 
-		const svgShadowTemplate = '<svg style="width:{iconwidth};" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 20"><defs><filter id="f" height="1.7" y="-0.2" width="1.4" x="-0.2"><feGaussianBlur stdDeviation="1.5491099" /></filter></defs><path d="m 2,18 c 1.4,-2 1,-3.5 3,-6.5 1.5,-3 6.8,-7 10,-8 3,-1 5,-0.8 7,0 1.6,0.9 3.5,1.8 3,3 -0.4,1 0,3 -2,5 -2,1.8 -5.7,3 -9,4 -3.4,1 -8.8,2 -11,3 z" style="opacity:0.4;fill:#000;stroke:none;filter:url(#f);" /></svg>';
+		const svgShadowTemplate = '<svg style="width:{iconwidth};" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 28"><defs><filter id="f" height="1.7" y="-0.2" width="1.4" x="-0.2"><feGaussianBlur stdDeviation="1.5491099" /></filter></defs><path d="m 2,18 c 1.4,-2 1,-3.5 3,-6.5 1.5,-3 6.8,-7 10,-8 3,-1 5,-0.8 7,0 1.6,0.9 3.5,1.8 3,3 -0.4,1 0,3 -2,5 -2,1.8 -5.7,3 -9,4 -3.4,1 -8.8,2 -11,3 z" style="opacity:0.1;fill:#000;stroke:none;filter:url(#f);" /></svg>';
 
 		
 		const SVGIcon = L.DivIcon.extend({
@@ -159,7 +159,7 @@
 						options.tooltipAnchor = [0, -0.6*options.iconSize[1]];
 
 						// and the shadow
-						options.shadowSize = options.shadowSize || options.iconSize[1];
+						options.shadowSize = options.shadowSize || 0.8*options.iconSize[1];
 						if (!isNaN(options.shadowSize)) {
 								const size = options.shadowSize;
 								options.shadowSize = [size, size*0.5];
@@ -323,14 +323,17 @@
 						layer.openPopup();
 				}
 		}
-		function addGeoJSON(lg, url, tooltiptext) {
+		function addGeoJSON(map, url, pan2, tooltiptext) {
 				const request = new XMLHttpRequest();
 				request.overrideMimeType("application/json");
 				request.onreadystatechange = function() {
 						if ((request.readyState === XMLHttpRequest.DONE) &&
 								(request.status === 200)) {
 								const json = parseGeoJSON(request.responseText);
-								const layer = L.geoJSON(json, L.easymap.geojson).addTo(lg);
+								const layer = L.geoJSON(json, L.easymap.geojson).addTo(map);
+								if(pan2) {
+										map.fitBounds(layer.getBounds());
+								}
 								if (tooltiptext) { layer.bindTooltip(tooltiptext); }
 						}
 				};
@@ -357,11 +360,13 @@
 				const mpos = markertxt && markertxt.split(",");
 				const locate = booldata(elem, "locate");
 				const origin = getOrigin(elem, mpos );
+				const zoom =	data(elem, "zoom") || L.easymap.config.zoom;
 				const url = data(elem, "geojson");
 				
-				const map = L.map(elem); // create the map
-				map.setView(origin, // set the view
-										data(elem, "zoom") || L.easymap.config.zoom);
+				const map = L.map(elem, {worldCopyJump: true}); // create the map
+				if(origin != 'geojson') {
+						map.setView(origin, zoom); // set the view
+				}
 
 				attributeEasymap(map);
 				
@@ -391,7 +396,7 @@
 
 				if (url) {
 						// only deliver tooltip to geojson-callback if there is no marker
-						addGeoJSON(map, url, !marker && tooltiptext);
+						addGeoJSON(map, url, origin=="geojson", !marker && tooltiptext);
 				}
 
 				// add a tooltip
