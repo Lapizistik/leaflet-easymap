@@ -11,16 +11,18 @@ module.exports = {
   // Webpack needs to know where to start the bundling process,
   // so we define the main JS and Sass files, both under
   // the './src' directory
-  entry: ['./src/leaflet-easymap.js'],
+		entry: {
+				'leaflet-easymap': './src/leaflet-easymap.js',
+				'explain-content': './src/explain-content.js'
+		},
 
   // This is where we define the path where Webpack will place
   // the bundled JS file
   output: {
-    path: __dirname,
-
 			// The name of the output bundle. Path is also relative
     // to the output path
-    filename: 'js/leaflet-easymap.js'
+			filename: '[name].js',
+			path: __dirname + '/js'
   },
   module: {
     // Array of rules that tells Webpack how the modules (output)
