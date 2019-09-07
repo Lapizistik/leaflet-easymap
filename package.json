@@ -1,0 +1,18 @@
+{
+		"devDependencies": {
+				"@babel/core": "^7.5.5",
+				"@babel/preset-env": "^7.5.5",
+				"babel-loader": "^8.0.6",
+				"cross-env": "^5.2.1",
+				"live-server": "^1.2.1",
+				"npm-run-all": "^4.1.5",
+				"webpack": "^4.39.3",
+				"webpack-cli": "^3.3.7"
+		},
+		"scripts": {
+				"dev:assets": "webpack --watch",
+				"dev:start": "live-server --host=localhost",
+				"dev": "npm-run-all -p dev:*",
+				"build": "cross-env NODE_ENV=production webpack"
+		}
+}
