@@ -3,6 +3,9 @@
 import "./config.js";
 import {svgIcon} from "./svgicon.js";
 
+/*
+* Add geojson styling to the config.
+*/
 L.easymap.geojson = {
 		style: geojsonStyle,
 		pointToLayer: geojsonMarker,
