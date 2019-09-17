@@ -3,10 +3,13 @@ h1 { font-family: Sans; }
 h1 a { text-decoration: none; }
 h1 a:hover { text-decoration: underline; }
 code {
+		background-color: #eee;
+		color: #007;
+}
+figcaption code {
+		background-color: #ddd;
 		margin: 0px 0.5em;
 		padding: 0.3em 0.6em;
-		background-color: #ddd;
-		color: #007;
 }
 figure {
 		display: inline-block;
