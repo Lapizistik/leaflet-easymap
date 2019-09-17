@@ -17,7 +17,6 @@ const svgShadowTemplate = '<svg style="width:{iconwidth};" xmlns="http://www.w3.
 const SVGIcon = L.DivIcon.extend({
 		options: {
 				className: 'svg-icon',
-				iconSize : L.easymap.config.iconsizes['medium'],
 				'marker-color': '#7e7e7e',
 				'marker-symbolcolor': '#ffffff',
 				stroke: '#555555',
@@ -29,8 +28,7 @@ const SVGIcon = L.DivIcon.extend({
 				options = L.Util.setOptions(this, options);
 				
 				options.iconSize =
-						L.easymap.config.iconsizes[options['marker-size']] ||
-						options.iconSize;
+						L.easymap.config.iconsizes[options['marker-size'] || 'medium'];
 				if (!isNaN(options.iconSize)) {
 						const size = options.iconSize;
 						options.iconSize = [size, size*1.48];
