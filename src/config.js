@@ -1,9 +1,9 @@
 "use strict";
 
 // Default config
+
 const osm_attr = '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors';
 
-// ToDo: do not overwrite config set before
 L.easymap = {
 		attribution: '<a href="http://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> | <a href="https://lapizistik.github.io/leaflet-easymap" title="Include maps in HTML without programming">Easymap</a>',
 		config: {
